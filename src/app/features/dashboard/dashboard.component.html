@@ -1,0 +1,7 @@
+<div class="grid">
+  <app-stock-tile
+    *ngFor="let item of stocks$ | async | keyvalue; trackBy: trackBySymbol"
+    [stock]="item.value"
+  >
+  </app-stock-tile>
+</div>

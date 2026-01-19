@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { WebsocketService } from './core/services/websocket.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'algo-trader';
+
+  constructor(private websocketService: WebsocketService) { }
+
+  ngOnInit(): void {
+    this.websocketService.connect()
+  }
 }

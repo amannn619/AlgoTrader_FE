@@ -1,0 +1,19 @@
+<mat-card
+  class="stock-tile"
+  [ngClass]="stock.lastDirection"
+  (click)="openDetail()"
+>
+  <div class="symbol">
+    {{ stock.symbol }}
+  </div>
+
+  <div class="prices">
+    <span class="current">
+      {{ stock.currPrice | number:'1.2-2' }}
+    </span>
+
+    <span class="base">
+      {{ stock.basePrice | number:'1.2-2' }}
+    </span>
+  </div>
+</mat-card>

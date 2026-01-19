@@ -1,0 +1,88 @@
+<div class="stock-header">
+  <button mat-stroked-button color="primary" (click)="goBack()">← Back</button>
+
+  <div class="stock-info">
+    <div class="stock-name">
+      {{ stock?.symbol }}
+      <span class="direction" [ngClass]="stock?.lastDirection">
+        <mat-icon class="direction-icon" [ngClass]="stock?.lastDirection">
+          {{
+            stock?.lastDirection === "UP"
+              ? "arrow_upward"
+              : stock?.lastDirection === "DOWN"
+              ? "arrow_downward"
+              : "remove"
+          }}
+        </mat-icon>
+      </span>
+    </div>
+
+    <div class="price-info">
+      <span class="current">
+        {{ stock?.currPrice | number : "1.2-2" }}
+      </span>
+      <span class="base">
+        Base: {{ stock?.basePrice | number : "1.2-2" }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<mat-tab-group class="stock-tabs">
+  <mat-tab label="Trades">
+    <div class="filter-bar">
+      <mat-form-field class="action-filter">
+        <mat-label>Action</mat-label>
+        <mat-select
+          multiple
+          [(value)]="selectedTradeActions"
+          (selectionChange)="onActionChange('trade')"
+        >
+          <mat-option value="BUY">Buy</mat-option>
+          <mat-option value="SELL">Sell</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-container">
+      <app-smart-table
+        [columns]="tradeColumns"
+        [data]="trades"
+        [enablePagination]="true"
+        [totalCount]="totalTrades"
+        [rowClassFn]="rowClass"
+        (pageChange)="onTradePageChange($event)"
+      >
+      </app-smart-table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Triggers">
+    <div class="filter-bar">
+      <mat-form-field class="action-filter">
+        <mat-label>Action</mat-label>
+        <mat-select
+          multiple
+          [(value)]="selectedTriggerActions"
+          (selectionChange)="onActionChange('trigger')"
+        >
+          <mat-option value="BUY">Buy</mat-option>
+          <mat-option value="SELL">Sell</mat-option>
+          <mat-option value="HOLD">Hold</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-container">
+      <app-smart-table
+        [columns]="triggerColumns"
+        [data]="triggers"
+        [enablePagination]="true"
+        [totalCount]="totalTriggers"
+        [rowClassFn]="rowClass"
+        (pageChange)="onTriggerPageChange($event)"
+      >
+      </app-smart-table>
+    </div>
+  </mat-tab>
+</mat-tab-group>

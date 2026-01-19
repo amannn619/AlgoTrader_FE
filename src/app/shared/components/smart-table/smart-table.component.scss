@@ -1,0 +1,26 @@
+.smart-table {
+    width: 100%;
+    background-color: #f1f1f1;
+}
+
+.row-buy {
+    background-color: #a5ffac; // light green
+}
+
+.row-sell {
+    background-color: #ffb0a6; // light red
+}
+
+.row-hold {
+    background-color: #d1d1d1; // grey
+}
+
+
+th {
+    font-weight: 600;
+}
+
+td,
+th {
+    padding: 8px 12px;
+}

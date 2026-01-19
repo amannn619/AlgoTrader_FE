@@ -1,0 +1,20 @@
+<mat-card class="sensex-bar">
+  <div class="sensex-row">
+    <span class="sensex-title">SENSEX</span>
+
+    <span class="sensex-direction" [ngClass]="sensex.lastDirection">
+      <mat-icon>
+        {{ sensex.lastDirection === "UP" ? "arrow_upward" : "arrow_downward" }}
+      </mat-icon>
+      {{ sensex.lastDirection }}
+    </span>
+
+    <span class="sensex-price">
+      {{ sensex.currPrice | number : "1.0-0" }}
+    </span>
+
+    <span class="sensex-base">
+      Base: {{ sensex.basePrice | number : "1.0-0" }}
+    </span>
+  </div>
+</mat-card>
