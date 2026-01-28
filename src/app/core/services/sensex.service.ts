@@ -26,24 +26,6 @@ export class SensexService {
     });
   }
 
-  // public updateBasePrice(sensex: Partial<Sensex>) {
-  //   const current = this.sensexSubject.value;
-  //   this.sensexSubject.next({
-  //     ...current,
-  //     basePrice: sensex.basePrice ?? current.basePrice,
-  //     lastDirection: sensex.lastDirection ?? current.lastDirection,
-  //     lastTriggerTime: sensex.lastTriggerTime ?? current.lastTriggerTime,
-  //   });
-  // }
-
-  // public updateCurrentPrice(price: number) {
-  //   const current = this.sensexSubject.value;
-  //   this.sensexSubject.next({
-  //     ...current,
-  //     currentPrice: price,
-  //   });
-  // }
-
   public getSensex(): Sensex {
     return this.sensexSubject.value;
   }

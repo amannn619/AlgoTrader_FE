@@ -1,26 +1,80 @@
 .smart-table {
     width: 100%;
-    background-color: #f1f1f1;
+    background-color: white;
+    box-shadow: none;
 }
 
+tr.mat-mdc-header-row {
+    height: 52px;
+    background-color: #e3e3e3;
+    /* Subtle off-white background to distinguish header */
+}
+
+th.mat-mdc-header-cell {
+    font-size: 13px;
+    /* Slightly larger for readability */
+    text-transform: uppercase;
+    color: #5f6368;
+    /* Professional dark grey */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e0e0e0;
+
+    /* Add left padding to the first column to align with card titles */
+    &:first-of-type {
+        padding-left: 24px;
+    }
+
+    /* Add right padding to the last column */
+    &:last-of-type {
+        padding-right: 24px;
+    }
+}
+
+/* Base Row Style */
+tr.mat-mdc-row {
+    height: 48px;
+    /* Compact rows */
+    transition: background 0.2s;
+}
+
+
+td.mat-mdc-cell {
+    font-size: 13px;
+    color: #333;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+/* --- Minimalist Status Indicators --- */
+/* Instead of full background, use a left border on the first cell */
+
 .row-buy {
-    background-color: #a5ffac; // light green
+    /* Very subtle green tint */
+    background-color: rgba(46, 125, 50, 0.1);
+
+    td:first-of-type {
+        border-left: 3px solid #2e7d32;
+    }
 }
 
 .row-sell {
-    background-color: #ffb0a6; // light red
+    /* Very subtle red tint */
+    background-color: rgba(198, 40, 40, 0.2);
+
+    td:first-of-type {
+        border-left: 3px solid #c62828;
+    }
 }
 
 .row-hold {
-    background-color: #d1d1d1; // grey
+    background-color: rgba(100, 100, 100, 0.2);
+
+    td:first-of-type {
+        border-left: 3px solid #3e3e3e;
+    }
 }
 
-
-th {
-    font-weight: 600;
-}
-
-td,
-th {
-    padding: 8px 12px;
+/* Hover Effect */
+tr.mat-mdc-row:hover {
+    background-color: #fafafa;
 }

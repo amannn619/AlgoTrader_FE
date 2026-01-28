@@ -1,0 +1,121 @@
+<mat-tab-group class="action-tabs">
+  <mat-tab label="Trade History">
+    <div class="filter-bar">
+      <mat-form-field appearance="outline" class="dense">
+        <mat-label>Stock Symbol</mat-label>
+        <mat-select
+          class="select-panel"
+          multiple
+          [(value)]="selectedSymbols"
+          (selectionChange)="onFilterChange('trade')"
+          (openedChange)="!$event ? onDropdownClose() : null"
+        >
+          <div
+            class="select-search-container"
+            (click)="$event.stopPropagation()"
+          >
+            <input
+              matInput
+              placeholder="Search stocks..."
+              [(ngModel)]="stockSearchText"
+              (keyup)="filterStocks()"
+              class="select-search-input"
+              autocomplete="off"
+            />
+          </div>
+
+          <mat-option *ngFor="let s of filteredStocks" [value]="s.symbol">
+            <span class="symbol-text">{{ s.symbol }}</span>
+            <span class="name-text">({{ s.name }})</span>
+          </mat-option>
+
+          <mat-option *ngIf="filteredStocks.length === 0" disabled>
+            No stocks found
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Action</mat-label>
+        <mat-select
+          multiple
+          [(value)]="selectedTradeActions"
+          (selectionChange)="onFilterChange('trade')"
+        >
+          <mat-option value="BUY">Buy</mat-option>
+          <mat-option value="SELL">Sell</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <app-smart-table
+      [columns]="tradeColumns"
+      [data]="trades"
+      [totalCount]="totalTrades"
+      [pageSize]="10"
+      [rowClassFn]="rowClass"
+      (pageChange)="onTradePage($event)"
+    >
+    </app-smart-table>
+  </mat-tab>
+
+  <mat-tab label="Trigger Logs">
+    <div class="filter-bar">
+      <mat-form-field appearance="outline" class="dense">
+        <mat-label>Stock Symbol</mat-label>
+        <mat-select
+          multiple
+          [(value)]="selectedSymbols"
+          (selectionChange)="onFilterChange('trigger')"
+          (openedChange)="!$event ? onDropdownClose() : null"
+        >
+          <div
+            class="select-search-container"
+            (click)="$event.stopPropagation()"
+          >
+            <input
+              matInput
+              placeholder="Search stocks..."
+              [(ngModel)]="stockSearchText"
+              (keyup)="filterStocks()"
+              class="select-search-input"
+              autocomplete="off"
+            />
+          </div>
+
+          <mat-option *ngFor="let s of filteredStocks" [value]="s.symbol">
+            <span class="symbol-text">{{ s.symbol }}</span>
+            <span class="name-text">({{ s.name }})</span>
+          </mat-option>
+
+          <mat-option *ngIf="filteredStocks.length === 0" disabled>
+            No stocks found
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Action</mat-label>
+        <mat-select
+          multiple
+          [(value)]="selectedTriggerActions"
+          (selectionChange)="onFilterChange('trigger')"
+        >
+          <mat-option value="BUY">Buy</mat-option>
+          <mat-option value="SELL">Sell</mat-option>
+          <mat-option value="HOLD">Hold</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <app-smart-table
+      [columns]="triggerColumns"
+      [data]="triggers"
+      [totalCount]="totalTriggers"
+      [pageSize]="10"
+      [rowClassFn]="rowClass"
+      (pageChange)="onTriggerPage($event)"
+    >
+    </app-smart-table>
+  </mat-tab>
+</mat-tab-group>

@@ -16,6 +16,30 @@ export class TriggerService {
 
   constructor(private http: HttpClient) { }
 
+  getAllTriggers(page: number, limit: number, actions: string[], symbols: string[]): Observable<{
+    items: Trigger[];
+    total: number;
+  }> {
+
+    const params: any = {
+      page,
+      limit
+    };
+
+    if (actions.length) {
+      params.actions = actions.join(',');
+    }
+
+    if (symbols.length) {
+      params.symbols = symbols.join(',');
+    }
+
+    return this.http.get<{
+      items: Trigger[];
+      total: number;
+    }>(`${this.baseUrl}`, { params });
+  }
+
   getTriggers(symbol: string, page: number, limit: number, actions: string[]): Observable<{
     items: Trigger[];
     total: number;

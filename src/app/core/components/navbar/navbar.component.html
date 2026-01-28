@@ -1,0 +1,74 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="sensex-ticker" *ngIf="sensex$ | async as sensex">
+    <div class="ticker-label">SENSEX</div>
+
+    <div class="price-container">
+      <div class="current-row direction" [ngClass]="sensex.lastDirection">
+        <span class="curr-price">{{
+          sensex.currPrice | number : "1.2-2"
+        }}</span>
+
+        <span class="indicator">
+          <mat-icon inline>
+            {{
+              sensex.lastDirection === "UP"
+                ? "arrow_upward"
+                : sensex.lastDirection === "DOWN"
+                ? "arrow_downward"
+                : "remove"
+            }}
+          </mat-icon>
+          {{
+            (sensex.currPrice - sensex.basePrice) / sensex.basePrice
+              | percent : "1.2-2"
+          }}
+        </span>
+      </div>
+
+      <div class="base-row">
+        <span class="base-label">Base:</span>
+        <span class="base-price">{{
+          sensex.basePrice | number : "1.2-2"
+        }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="nav-links">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Dashboard</a
+    >
+    <a mat-button routerLink="/actions" routerLinkActive="active"
+      >All Actions</a
+    >
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="session-controls">
+    <button mat-icon-button matTooltip="Upload BhavCopy" (click)="openUpload()">
+      <mat-icon>upload_file</mat-icon>
+    </button>
+
+    <ng-container *ngIf="{ running: isRunning$ | async } as state">
+      <div class="status-badge" [class.live]="state.running">
+        {{ state.running ? "MARKET OPEN" : "MARKET CLOSED" }}
+      </div>
+
+      <button
+        mat-raised-button
+        [color]="state.running ? 'warn' : 'accent'"
+        (click)="state.running ? stopSession() : openStartSession()"
+      >
+        <mat-icon>{{ state.running ? "stop" : "play_arrow" }}</mat-icon>
+        {{ state.running ? "STOP" : "START" }}
+      </button>
+    </ng-container>
+  </div>
+</mat-toolbar>

@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>Update Market Data</h2>
+
+<mat-dialog-content>
+  <p class="hint">
+    Upload the latest BhavCopy CSV files to sync market prices.
+  </p>
+
+  <div class="upload-container">
+    <div
+      class="upload-card"
+      [class.selected]="!!nseFile"
+      (click)="nseInput.click()"
+    >
+      <div class="icon-wrapper">
+        <mat-icon>{{ nseFile ? "description" : "cloud_upload" }}</mat-icon>
+      </div>
+      <div class="info">
+        <span class="label">NSE BhavCopy</span>
+        <span class="filename">{{
+          nseFile?.name || "Click to select CSV..."
+        }}</span>
+      </div>
+      <input
+        #nseInput
+        type="file"
+        hidden
+        (change)="onFileSelected($event, 'nse')"
+        accept=".csv"
+      />
+    </div>
+
+    <div
+      class="upload-card"
+      [class.selected]="!!bseFile"
+      (click)="bseInput.click()"
+    >
+      <div class="icon-wrapper">
+        <mat-icon>{{ bseFile ? "description" : "cloud_upload" }}</mat-icon>
+      </div>
+      <div class="info">
+        <span class="label">BSE BhavCopy</span>
+        <span class="filename">{{
+          bseFile?.name || "Click to select CSV..."
+        }}</span>
+      </div>
+      <input
+        #bseInput
+        type="file"
+        hidden
+        (change)="onFileSelected($event, 'bse')"
+        accept=".csv"
+      />
+    </div>
+  </div>
+
+  <mat-progress-bar
+    *ngIf="uploading"
+    mode="indeterminate"
+    class="progress"
+  ></mat-progress-bar>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="uploading">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="upload()"
+    [disabled]="uploading || (!nseFile && !bseFile)"
+  >
+    {{ uploading ? "Uploading..." : "Upload Files" }}
+  </button>
+</mat-dialog-actions>

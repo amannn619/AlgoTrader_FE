@@ -16,6 +16,30 @@ export class TradeService {
 
   constructor(private http: HttpClient) { }
 
+  getAllTrades(page: number, limit: number, actions: string[], symbols: string[]): Observable<{
+    items: Trade[];
+    total: number;
+  }> {
+
+    const params: any = {
+      page,
+      limit
+    };
+
+    if (actions.length) {
+      params.actions = actions.join(',');
+    }
+
+    if (symbols.length) {
+      params.symbols = symbols.join(',');
+    }
+
+    return this.http.get<{
+      items: Trade[];
+      total: number;
+    }>(`${this.baseUrl}`, { params });
+  }
+
   getTrades(symbol: string, page: number, limit: number, actions: string[]): Observable<{
     items: Trade[];
     total: number;
