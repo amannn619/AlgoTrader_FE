@@ -13,7 +13,7 @@ import { TriggerService } from 'src/app/core/services/trigger.service';
 @Component({
   selector: 'app-stock-detail',
   templateUrl: './stock-detail.component.html',
-  styleUrls: ['./stock-detail.component.scss']
+  styleUrls: ['./stock-detail.component.scss'],
 })
 export class StockDetailComponent implements OnInit {
   symbol!: string;
@@ -33,7 +33,6 @@ export class StockDetailComponent implements OnInit {
   selectedTradeActions: string[] = [];
   selectedTriggerActions: string[] = [];
 
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -45,140 +44,135 @@ export class StockDetailComponent implements OnInit {
       {
         key: 'action',
         label: 'Action',
-        width: '90px'
+        width: '90px',
       },
       {
         key: 'price',
         label: 'Price',
         width: '100px',
-        cell: t => t.price.toFixed(2)
+        cell: (t) => t.price.toFixed(2),
       },
       {
         key: 'quantity',
         label: 'Qty',
-        width: '60px'
+        width: '60px',
       },
       {
         key: 'pnl',
         label: 'PnL',
         width: '60px',
-        cell: t => t.pnl ? t.pnl?.toFixed(2) : "N/A",
+        cell: (t) => (t.pnl ? t.pnl?.toFixed(2) : 'N/A'),
       },
       {
         key: 'timestamp',
         label: 'Time',
-        cell: t => new Date(t.timestamp).toLocaleTimeString(),
-        width: '60px'
-      }
+        cell: (t) => new Date(t.timestamp).toLocaleTimeString(),
+        width: '60px',
+      },
     ];
 
     this.triggerColumns = [
       {
-        key: 'action',
-        label: 'Action',
-        width: '90px'
-      },
-      {
         key: 'stockPrice',
         label: 'Stock',
-        cell: t => t.stockPrice.toFixed(2),
-        width: '90px'
-      },
-      {
-        key: 'sensexPrice',
-        label: 'Sensex',
-        cell: t => t.sensexPrice.toFixed(2),
-        width: '90px'
+        cell: (t) => t.stockPrice.toFixed(2),
+        width: '90px',
       },
       {
         key: 'lastStockPrice',
-        label: 'Prev Stock',
-        cell: t => t.lastStockPrice.toFixed(2),
-        width: '90px'
+        label: 'Base Stock Price',
+        cell: (t) => t.lastStockPrice.toFixed(2),
+        width: '90px',
       },
+
       {
-        key: 'lastSensexPrice',
-        label: 'Prev Sensex',
-        cell: t => t.lastSensexPrice.toFixed(2),
-        width: '90px'
+        key: 'stockDirection',
+        label: 'Stock Direction',
+        cell: (t) => t.stockDirection,
+        width: '80px',
+      },
+
+      {
+        key: 'sensexDirection',
+        label: 'Sensex Direction',
+        cell: (t) => t.sensexDirection,
+        width: '80px',
+      },
+
+      {
+        key: 'action',
+        label: 'Action',
+        width: '90px',
       },
       {
         key: 'timestamp',
         label: 'Time',
-        cell: t => new Date(t.timestamp).toLocaleTimeString(),
-        width: '9px'
-      }
+        cell: (t) => new Date(t.timestamp).toLocaleTimeString(),
+        width: '9px',
+      },
     ];
-
   }
 
   ngOnInit(): void {
     this.symbol = this.route.snapshot.paramMap.get('symbol')!;
-    this.stockService
-      .getStock$(this.symbol)
-      .subscribe(stock => {
-        if (stock) {
-          this.stock = stock;
-        }
-      });
+    this.stockService.getStock$(this.symbol).subscribe((stock) => {
+      if (stock) {
+        this.stock = stock;
+      }
+    });
 
-
-    this.getTiggerData(0, 5)
-    this.getTradeData(0, 5)
+    this.getTiggerData(0, 5);
+    this.getTradeData(0, 5);
 
     this.tradeService.reloadTrade$.subscribe(() => {
-      console.log("reloading trade")
+      console.log('reloading trade');
       this.getTradeData(0, 5);
-    })
+    });
     this.triggerService.reloadTrigger$.subscribe(() => {
-      console.log("reloading trigger")
+      console.log('reloading trigger');
 
       // this.getTiggerData(0, 5);
-    })
+    });
   }
 
   onActionChange(table: string) {
-    if (table == "trade") {
+    if (table == 'trade') {
       this.getTradeData(0, 5);
-    }
-    else {
+    } else {
       this.getTiggerData(0, 5);
     }
   }
 
-
   onTradePageChange(event: PageEvent) {
-    console.log(event)
+    console.log(event);
     this.getTradeData(event.pageIndex, event.pageSize);
   }
 
   onTriggerPageChange(event: PageEvent) {
     this.getTiggerData(event.pageIndex, event.pageSize);
-
   }
 
   getTradeData(pageIndex: number, pageSize: number) {
-    this.tradeService.getTrades(
-      this.symbol,
-      pageIndex,
-      pageSize,
-      this.selectedTradeActions
-    ).subscribe(trades => {
-      this.trades = trades.items;
-      this.totalTrades = trades.total;
-    });
+    this.tradeService
+      .getTrades(this.symbol, pageIndex, pageSize, this.selectedTradeActions)
+      .subscribe((trades) => {
+        this.trades = trades.items;
+        this.totalTrades = trades.total;
+      });
   }
 
   getTiggerData(pageIndex: number, pageSize: number) {
-    this.triggerService.getTriggers(
-      this.symbol,
-      pageIndex,
-      pageSize,
-      this.selectedTriggerActions
-    ).subscribe(triggers => {
-      this.triggers = triggers.items;
-      this.totalTriggers = triggers.total;
-    });
+    this.triggerService
+      .getTriggers(
+        this.symbol,
+        pageIndex,
+        pageSize,
+        this.selectedTriggerActions
+      )
+      .subscribe((triggers) => {
+        this.triggers = triggers.items;
+        this.totalTriggers = triggers.total;
+      });
   }
 
   rowClass(trade: any) {
@@ -190,10 +184,9 @@ export class StockDetailComponent implements OnInit {
       default:
         return 'row-hold';
     }
-  };
-
+  }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 }

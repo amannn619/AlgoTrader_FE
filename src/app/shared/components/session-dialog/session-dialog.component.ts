@@ -8,9 +8,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class SessionDialogComponent {
   data = {
-    clientId: 'A768340',
-    password: '8430',
-    apiKey: 'omT0j1lA',
     totp: ''
   };
   constructor(public dialogRef: MatDialogRef<SessionDialogComponent>) { }

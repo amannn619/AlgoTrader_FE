@@ -4,6 +4,8 @@ export interface Trigger {
     sensexPrice: number;
     lastStockPrice: number;
     lastSensexPrice: number;
+    sensexDirection: string;
+    stockDirection: string
     timestamp: number;
 }
 

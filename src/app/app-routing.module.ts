@@ -5,9 +5,9 @@ import { StockDetailComponent } from './features/stock-detail/stock-detail.compo
 import { AllActionsComponent } from './features/all-actions/all-actions.component';
 
 const routes: Routes = [
-  { path: "", component: DashboardComponent },
+  { path: "", component: AllActionsComponent },
+  { path: "dashboard", component: DashboardComponent },
   { path: "stock/:symbol", component: StockDetailComponent },
-  { path: "actions", component: AllActionsComponent },
 ];
 
 @NgModule({

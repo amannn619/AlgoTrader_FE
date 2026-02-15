@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { MASTER_STOCKS, StockConfig } from 'src/app/core/config/master-stocks';
+import { Sensex } from 'src/app/core/models/sensex.model';
 import { Stock } from 'src/app/core/models/stock.model';
 import { TableColumn } from 'src/app/core/models/table-column';
 import { Trade } from 'src/app/core/models/trade.model';
 import { Trigger } from 'src/app/core/models/trigger.model';
+import { SensexService } from 'src/app/core/services/sensex.service';
 import { StockService } from 'src/app/core/services/stock.service';
 import { TradeService } from 'src/app/core/services/trade.service';
 import { TriggerService } from 'src/app/core/services/trigger.service';
@@ -23,17 +25,19 @@ export class AllActionsComponent implements OnInit {
   triggers: Trigger[] = [];
   totalTrades = 0;
   totalTriggers = 0;
+  sensexData$: Observable<Sensex[]>;
 
   // Filters
   selectedSymbols: string[] = []; // For dropdown
   selectedTradeActions: string[] = [];
-  selectedTriggerActions: string[] = [];
+  selectedTriggerActions: string[] = ["BUY", "SELL"];
 
   allStocks: StockConfig[] = MASTER_STOCKS;
   filteredStocks: StockConfig[] = MASTER_STOCKS;
   stockSearchText: string = '';
 
   // Table Config
+  sensexColumns: TableColumn<Sensex>[] = [];
   tradeColumns: TableColumn<Trade>[] = [];
   triggerColumns: TableColumn<Trigger>[] = [];
 
@@ -41,12 +45,24 @@ export class AllActionsComponent implements OnInit {
     private router: Router,
     private stockService: StockService,
     private tradeService: TradeService,
-    private triggerService: TriggerService
+    private triggerService: TriggerService,
+    private sensexService: SensexService
   ) {
 
-    // 1. Define Columns (Adding 'Symbol' column)
+    this.sensexData$ = this.sensexService.sensex$.pipe(
+      map(sensex => [sensex])
+    );
+
+    this.sensexColumns = [
+      { key: 'name', label: 'Index', cell: () => 'SENSEX', width: '100px' },
+      { key: 'currPrice', label: 'Price', cell: (s) => s.currPrice.toFixed(2), width: '100px' },
+      { key: 'basePrice', label: 'Base Price', cell: (s) => s.basePrice.toFixed(2), width: '100px' },
+      { key: 'lastDirection', label: 'Direction', width: '100px' },
+      { key: 'timestamp', label: 'Last Updated', cell: (s) => s.lastTriggerTime ? new Date(s.lastTriggerTime).toLocaleTimeString() : '-', width: '120px' }
+    ];
+
     this.tradeColumns = [
-      { key: 'symbol', label: 'Symbol', width: '80px' }, // New Column
+      { key: 'symbol', label: 'Symbol', width: '80px' },
       { key: 'action', label: 'Action', width: '80px' },
       { key: 'price', label: 'Price', cell: t => t.price.toFixed(2), width: '80px' },
       { key: 'quantity', label: 'Qty', width: '60px' },
@@ -55,22 +71,26 @@ export class AllActionsComponent implements OnInit {
     ];
 
     this.triggerColumns = [
-      { key: 'symbol', label: 'Symbol', width: '80px' }, // New Column
-      { key: 'action', label: 'Action', width: '80px' },
-      { key: 'stockPrice', label: 'Stock', cell: t => t.stockPrice.toFixed(2), width: '80px' },
-      { key: 'sensexPrice', label: 'Sensex', cell: t => t.sensexPrice.toFixed(2), width: '80px' },
+      { key: 'symbol', label: 'Symbol', width: '80px' },
+      { key: 'stockPrice', label: 'Stock Price', cell: t => t.stockPrice.toFixed(2), width: '80px' },
       {
         key: 'lastStockPrice',
-        label: 'Prev Stock',
+        label: 'Base Stock Price',
         cell: t => t.lastStockPrice.toFixed(2),
         width: '90px'
       },
-      {
-        key: 'lastSensexPrice',
-        label: 'Prev Sensex',
-        cell: t => t.lastSensexPrice.toFixed(2),
-        width: '90px'
-      },
+      { key: 'stockDirection', label: 'Stock Direction', cell: t => t.stockDirection, width: '80px' },
+
+      { key: 'sensexDirection', label: 'Sensex Direction', cell: t => t.sensexDirection, width: '80px' },
+
+      // { key: 'sensexPrice', label: 'Sensex', cell: t => t.sensexPrice.toFixed(2), width: '80px' },
+      // {
+      //   key: 'lastSensexPrice',
+      //   label: 'Prev Sensex',
+      //   cell: t => t.lastSensexPrice.toFixed(2),
+      //   width: '90px'
+      // },
+      { key: 'action', label: 'Action', width: '80px' },
       { key: 'timestamp', label: 'Time', cell: t => new Date(t.timestamp).toLocaleString(), width: '140px' }
     ];
   }
@@ -137,6 +157,12 @@ export class AllActionsComponent implements OnInit {
   rowClass(row: any) {
     if (row.action === 'BUY') return 'row-buy';
     if (row.action === 'SELL') return 'row-sell';
+    return 'row-hold';
+  }
+
+  sensexRowClass(row: any) {
+    if (row.lastDirection === 'UP') return 'row-buy';
+    if (row.lastDirection === 'DOWN') return 'row-sell';
     return 'row-hold';
   }
 }
