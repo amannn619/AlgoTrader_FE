@@ -7,5 +7,6 @@ export interface Trigger {
     sensexDirection: string;
     stockDirection: string
     timestamp: number;
+    symbol: string;
 }
 

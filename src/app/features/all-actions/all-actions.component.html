@@ -12,6 +12,17 @@
 </div>
 
 <mat-tab-group class="action-tabs">
+  <mat-tab label="Stocks">
+    <app-smart-table
+      [columns]="triggerColumns"
+      [data]="(latestTriggers$ | async) || []"
+      [totalCount]="(latestTriggerTotal$ | async) || 0"
+      [pageSize]="10"
+      [rowClassFn]="rowClass"
+      (pageChange)="onLatestTriggerPage($event)"
+    >
+    </app-smart-table>
+  </mat-tab>
   <mat-tab label="Trigger Logs">
     <div class="filter-bar">
       <mat-form-field appearance="outline" class="dense">

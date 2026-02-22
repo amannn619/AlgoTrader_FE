@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 import { MASTER_STOCKS, StockConfig } from 'src/app/core/config/master-stocks';
 import { Sensex } from 'src/app/core/models/sensex.model';
-import { Stock } from 'src/app/core/models/stock.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TableColumn } from 'src/app/core/models/table-column';
 import { Trade } from 'src/app/core/models/trade.model';
 import { Trigger } from 'src/app/core/models/trigger.model';
@@ -23,8 +23,13 @@ export class AllActionsComponent implements OnInit {
   // Data
   trades: Trade[] = [];
   triggers: Trigger[] = [];
+  // latestTriggers: Trigger[] = [];
+  latestTriggers$ = this.triggerService.latestTriggers$;
+  latestTriggerTotal$ = this.triggerService.latestTriggerTotal$;
+
   totalTrades = 0;
   totalTriggers = 0;
+  // totalLatestTriggers = 0;
   sensexData$: Observable<Sensex[]>;
 
   // Filters
@@ -40,13 +45,19 @@ export class AllActionsComponent implements OnInit {
   sensexColumns: TableColumn<Sensex>[] = [];
   tradeColumns: TableColumn<Trade>[] = [];
   triggerColumns: TableColumn<Trigger>[] = [];
+  pageIndex: number = 0;
+  pageSize: number = 10;
+
+
+  private wsSub!: Subscription;
 
   constructor(
     private router: Router,
     private stockService: StockService,
     private tradeService: TradeService,
     private triggerService: TriggerService,
-    private sensexService: SensexService
+    private sensexService: SensexService,
+    private destroyRef: DestroyRef
   ) {
 
     this.sensexData$ = this.sensexService.sensex$.pipe(
@@ -73,23 +84,9 @@ export class AllActionsComponent implements OnInit {
     this.triggerColumns = [
       { key: 'symbol', label: 'Symbol', width: '80px' },
       { key: 'stockPrice', label: 'Stock Price', cell: t => t.stockPrice.toFixed(2), width: '80px' },
-      {
-        key: 'lastStockPrice',
-        label: 'Base Stock Price',
-        cell: t => t.lastStockPrice.toFixed(2),
-        width: '90px'
-      },
+      { key: 'lastStockPrice', label: 'Base Stock Price', cell: t => t.lastStockPrice.toFixed(2), width: '90px' },
       { key: 'stockDirection', label: 'Stock Direction', cell: t => t.stockDirection, width: '80px' },
-
       { key: 'sensexDirection', label: 'Sensex Direction', cell: t => t.sensexDirection, width: '80px' },
-
-      // { key: 'sensexPrice', label: 'Sensex', cell: t => t.sensexPrice.toFixed(2), width: '80px' },
-      // {
-      //   key: 'lastSensexPrice',
-      //   label: 'Prev Sensex',
-      //   cell: t => t.lastSensexPrice.toFixed(2),
-      //   width: '90px'
-      // },
       { key: 'action', label: 'Action', width: '80px' },
       { key: 'timestamp', label: 'Time', cell: t => new Date(t.timestamp).toLocaleString(), width: '140px' }
     ];
@@ -98,6 +95,30 @@ export class AllActionsComponent implements OnInit {
   ngOnInit(): void {
     this.loadTrades(0, 10);
     this.loadTriggers(0, 10);
+    this.loadLatestTriggers(0, 10);
+
+    this.triggerService.getLatestTriggers(0, 10, []).subscribe();
+
+    this.triggerService.realTimeTrigger$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(newTrigger => {
+        this.handleNewLog(newTrigger);
+      });
+  }
+
+  handleNewLog(trigger: Trigger) {
+    const actionMatch = this.selectedTriggerActions.length === 0 ||
+      this.selectedTriggerActions.includes(trigger.action);
+
+    const symbolMatch = this.selectedSymbols.length === 0 ||
+      this.selectedSymbols.includes(trigger.symbol);
+
+    if (actionMatch && symbolMatch) {
+      this.totalTriggers++;
+      if (this.pageIndex == 0) {
+        this.triggers = [trigger, ...this.triggers].splice(0, this.pageSize);
+      }
+    }
   }
 
   filterStocks() {
@@ -118,7 +139,6 @@ export class AllActionsComponent implements OnInit {
     this.filterStocks();
   }
 
-  // --- Loaders ---
   loadTrades(page: number, limit: number) {
     this.tradeService.getAllTrades(page, limit, this.selectedTradeActions, this.selectedSymbols)
       .subscribe(res => {
@@ -135,6 +155,10 @@ export class AllActionsComponent implements OnInit {
       });
   }
 
+  loadLatestTriggers(page: number, limit: number) {
+    this.triggerService.getLatestTriggers(page, limit, []).subscribe();
+  }
+
   // --- Event Handlers ---
   onFilterChange(type: 'trade' | 'trigger') {
     if (type === 'trade') this.loadTrades(0, 10);
@@ -146,7 +170,13 @@ export class AllActionsComponent implements OnInit {
   }
 
   onTriggerPage(e: PageEvent) {
+    this.pageIndex = e.pageIndex;
+    this.pageSize = e.pageSize;
     this.loadTriggers(e.pageIndex, e.pageSize);
+  }
+
+  onLatestTriggerPage(e: PageEvent) {
+    this.loadLatestTriggers(e.pageIndex, e.pageSize);
   }
 
   goBack() {

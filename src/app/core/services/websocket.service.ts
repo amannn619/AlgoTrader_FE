@@ -4,6 +4,7 @@ import { SensexService } from './sensex.service';
 import { StockService } from './stock.service';
 import { TradeService } from './trade.service';
 import { TriggerService } from './trigger.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class WebsocketService {
   ) { }
 
   public connect(): void {
-    this.ws = webSocket('ws://localhost:8081');
+    this.ws = webSocket(environment.wsUrl);
 
     this.ws.subscribe(msg => {
       switch (msg.type) {
@@ -36,7 +37,7 @@ export class WebsocketService {
           break;
 
         case 'TRIGGER':
-          this.handleTrigger();
+          this.handleTrigger(msg.payload);
           break;
 
         case 'TRADE':
@@ -55,8 +56,8 @@ export class WebsocketService {
     this.stockService.update(payload);
   }
 
-  private handleTrigger() {
-    this.triggerService.addTrigger();
+  private handleTrigger(payload: any) {
+    this.triggerService.processRealTimeTrigger(payload);
   }
 
   private handleTrade() {

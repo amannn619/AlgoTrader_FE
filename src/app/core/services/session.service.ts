@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface SessionCredentials {
   apiKey: string;
@@ -13,7 +14,7 @@ export interface SessionCredentials {
   providedIn: 'root'
 })
 export class SessionService {
-  private baseUrl = 'http://localhost:3000/api/session';
+  private baseUrl = `${environment.apiUrl}/session`;
 
   // Track if session is running locally to update UI immediately
   private isRunningSubject = new BehaviorSubject<boolean>(false);

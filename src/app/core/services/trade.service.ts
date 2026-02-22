@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Trade } from '../models/trade.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TradeService {
 
-  private baseUrl = 'http://localhost:3000/api/trades';
+  private baseUrl = `${environment.apiUrl}/trades`;
   private tradesExecuted: number = 0
 
   private reloadSubject: Subject<void> = new Subject();

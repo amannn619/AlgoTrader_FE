@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PageEvent } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -33,12 +34,16 @@ export class StockDetailComponent implements OnInit {
   selectedTradeActions: string[] = [];
   selectedTriggerActions: string[] = [];
 
+  pageIndex: number = 0;
+  pageSize: number = 5;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private stockService: StockService,
     private tradeService: TradeService,
-    private triggerService: TriggerService
+    private triggerService: TriggerService,
+    private destroyRef: DestroyRef
   ) {
     this.tradeColumns = [
       {
@@ -124,15 +129,25 @@ export class StockDetailComponent implements OnInit {
     this.getTiggerData(0, 5);
     this.getTradeData(0, 5);
 
-    this.tradeService.reloadTrade$.subscribe(() => {
-      console.log('reloading trade');
-      this.getTradeData(0, 5);
-    });
-    this.triggerService.reloadTrigger$.subscribe(() => {
-      console.log('reloading trigger');
+    this.triggerService.realTimeTrigger$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(newTrigger => {
+        this.handleNewLog(newTrigger);
+      });
+  }
 
-      // this.getTiggerData(0, 5);
-    });
+  handleNewLog(trigger: Trigger) {
+    const actionMatch = this.selectedTriggerActions.length === 0 ||
+      this.selectedTriggerActions.includes(trigger.action);
+
+    const symbolMatch = this.symbol == trigger.symbol;
+
+    if (actionMatch && symbolMatch) {
+      this.totalTriggers++;
+      if (this.pageIndex == 0) {
+        this.triggers = [trigger, ...this.triggers].splice(0, this.pageSize);
+      }
+    }
   }
 
   onActionChange(table: string) {
@@ -149,6 +164,8 @@ export class StockDetailComponent implements OnInit {
   }
 
   onTriggerPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.getTiggerData(event.pageIndex, event.pageSize);
   }
 

@@ -19,7 +19,7 @@ export class SmartTableComponent<T> implements OnChanges, AfterViewInit {
   @Input() enablePagination = true;
   @Input() pageSize = 5;
   @Input() pageSizeOptions: number[] = [5, 10, 25];
-  @Input() totalCount = 0;
+  @Input() totalCount: number | null = 0;
   @Input() rowClassFn?: (row: T) => string;
 
   @Output() pageChange = new EventEmitter<PageEvent>();
