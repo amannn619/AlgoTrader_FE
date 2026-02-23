@@ -97,7 +97,7 @@ export class AllActionsComponent implements OnInit {
     this.loadTriggers(0, 10);
     this.loadLatestTriggers(0, 10);
 
-    this.triggerService.getLatestTriggers(0, 10, []).subscribe();
+    // this.triggerService.getLatestTriggers(0, 10, []).subscribe();
 
     this.triggerService.realTimeTrigger$
       .pipe(takeUntilDestroyed(this.destroyRef))

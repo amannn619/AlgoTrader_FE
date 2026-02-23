@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Stock } from '../models/stock.model';
-import { Trade } from '../models/trade.model';
-import { Trigger } from '../models/trigger.model';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -34,6 +32,15 @@ export class StockService {
       }
     };
 
+    this.stocksSubject.next(this.stocks);
+  }
+
+  public initializeStocks(stocks: Stock[]) {
+    const newStocksRecord: Record<string, Stock> = {};
+    stocks.forEach(stock => {
+      newStocksRecord[stock.symbol] = stock;
+    });
+    this.stocks = newStocksRecord;
     this.stocksSubject.next(this.stocks);
   }
 }
