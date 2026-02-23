@@ -88,7 +88,7 @@ export class AllActionsComponent implements OnInit {
       { key: 'stockDirection', label: 'Stock Direction', cell: t => t.stockDirection, width: '80px' },
       { key: 'sensexDirection', label: 'Sensex Direction', cell: t => t.sensexDirection, width: '80px' },
       { key: 'action', label: 'Action', width: '80px' },
-      { key: 'timestamp', label: 'Time', cell: t => new Date(t.timestamp).toLocaleString(), width: '140px' }
+      { key: 'timestamp', label: 'Time', cell: t => t.timestamp ? new Date(t.timestamp).toLocaleString() : "-", width: '140px' }
     ];
   }
 
