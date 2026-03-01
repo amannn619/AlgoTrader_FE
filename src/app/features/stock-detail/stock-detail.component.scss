@@ -119,3 +119,25 @@
     border-color: #1976d2 !important;
     border-top-width: 3px !important;
 }
+
+.stock-name {
+    font-size: 20px;
+    font-weight: 400;
+    color: #212121;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+@media (max-width: 600px) {
+    .stock-name {
+        font-size: 16px;
+        gap: 8px;
+    }
+
+    .price-info .current {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+}

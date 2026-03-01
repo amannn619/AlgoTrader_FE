@@ -17,6 +17,12 @@
     border-radius: 8px;
     border: 1px solid #e0e0e0;
     overflow: hidden;
+}
+
+.sensex-section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 
     h3 {
         margin: 0;
@@ -103,4 +109,11 @@
 
 ::ng-deep .mat-mdc-select-panel {
     padding-top: 0 !important;
+}
+
+@media (max-width: 600px) {
+    .sensex-section-header h3 {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Trigger } from '../models/trigger.model';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { SensexHistory } from '../models/sensexHistory.model';
 
 @Injectable({
   providedIn: 'root'
@@ -88,6 +89,22 @@ export class TriggerService {
         this.latestTriggerTotal.next(res.total);
         this.latestTriggersSubject.next(res.items);
       }));
+  }
+
+  getSensexTriggers(page: number, limit: number): Observable<{
+    items: SensexHistory[];
+    total: number;
+  }> {
+
+    const params: any = {
+      page,
+      limit
+    };
+
+    return this.http.get<{
+      items: SensexHistory[];
+      total: number;
+    }>(`${this.baseUrl}/sensexTriggers`, { params });
   }
 
   processRealTimeTrigger(newTrigger: Trigger) {

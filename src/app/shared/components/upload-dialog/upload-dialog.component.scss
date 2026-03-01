@@ -105,3 +105,31 @@ mat-dialog-actions {
     padding-bottom: 8px;
     padding-right: 8px;
 }
+
+@media (max-width: 600px) {
+
+    h2[mat-dialog-title] {
+        font-size: 16px;
+        padding: 12px 16px 8px 16px;
+    }
+
+    ::ng-deep .mat-mdc-dialog-content {
+        padding: 0 16px !important;
+    }
+
+    .upload-card {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .icon-wrapper {
+        width: 36px;
+        height: 36px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+}

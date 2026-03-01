@@ -11,8 +11,6 @@ export class StockService {
 
   public stocks$: Observable<Record<string, Stock>> = this.stocksSubject.asObservable();
 
-
-
   public getStocks(): Record<string, Stock> {
     return this.stocks;
   }

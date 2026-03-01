@@ -3,3 +3,27 @@
     max-width: 1400px;
     margin: 0 auto;
 }
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(255, 255, 255, 0.6);
+
+    z-index: 9999;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    pointer-events: all;
+}
+
+.content-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}

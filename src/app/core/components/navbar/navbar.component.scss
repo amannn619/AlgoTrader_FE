@@ -128,3 +128,65 @@
         box-shadow: 0 0 10px #69f0ae;
     }
 }
+
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.mobile-nav {
+    display: none;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #424242;
+    transition: all 0.3s ease;
+
+    &.live {
+        background: #69f0ae;
+        box-shadow: 0 0 8px #69f0ae;
+    }
+}
+
+@media (max-width: 850px) {
+    .desktop-nav {
+        display: none;
+    }
+
+    .mobile-nav {
+        display: flex;
+    }
+
+    .sensex-ticker {
+        padding: 4px 8px;
+        gap: 8px;
+
+        .ticker-label {
+            font-size: 12px;
+        }
+
+        .current-row {
+            font-size: 13px;
+        }
+
+        .indicator mat-icon {
+            font-size: 12px;
+            width: 12px;
+            height: 12px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .sensex-ticker {
+        .base-row {
+            display: none;
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { WebsocketService } from './core/services/websocket.service';
+import { LoadingService } from './core/services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -7,8 +8,12 @@ import { WebsocketService } from './core/services/websocket.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  isLoading$ = this.loadingService.isLoading$;
 
-  constructor(private websocketService: WebsocketService) { }
+  constructor(
+    private websocketService: WebsocketService,
+    private loadingService: LoadingService
+  ) { }
 
   ngOnInit(): void {
     this.websocketService.connect()

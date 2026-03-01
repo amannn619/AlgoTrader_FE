@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Sensex Change History</h2>
+
+<mat-dialog-content>
+  <app-smart-table
+    [columns]="historyColumns"
+    [data]="historyData"
+    [totalCount]="historyDataCount"
+    [rowClassFn]="sensexRowClass"
+    [pageSize]="5"
+    (pageChange)="onPageChange($event)"
+  >
+  </app-smart-table>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

@@ -16,7 +16,7 @@ import { SmartTableComponent } from './shared/components/smart-table/smart-table
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +29,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SessionDialogComponent } from './shared/components/session-dialog/session-dialog.component';
 import { UploadDialogComponent } from './shared/components/upload-dialog/upload-dialog.component';
 import { NavbarComponent } from './core/components/navbar/navbar.component';
-
+import { SensexHistoryComponent } from './shared/components/sensex-history/sensex-history.component';
+import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,7 +42,8 @@ import { NavbarComponent } from './core/components/navbar/navbar.component';
     AllActionsComponent,
     SessionDialogComponent,
     UploadDialogComponent,
-    NavbarComponent
+    NavbarComponent,
+    SensexHistoryComponent
   ],
   imports: [
     BrowserModule,
@@ -62,9 +65,16 @@ import { NavbarComponent } from './core/components/navbar/navbar.component';
     MatToolbarModule,
     MatDialogModule,
     MatMenuModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatProgressSpinnerModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoadingInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

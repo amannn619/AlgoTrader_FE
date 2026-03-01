@@ -12,6 +12,9 @@ import { SensexService } from 'src/app/core/services/sensex.service';
 import { StockService } from 'src/app/core/services/stock.service';
 import { TradeService } from 'src/app/core/services/trade.service';
 import { TriggerService } from 'src/app/core/services/trigger.service';
+import { Stock } from 'src/app/core/models/stock.model';
+import { MatDialog } from '@angular/material/dialog';
+import { SensexHistoryComponent } from 'src/app/shared/components/sensex-history/sensex-history.component';
 
 @Component({
   selector: 'app-all-actions',
@@ -23,7 +26,7 @@ export class AllActionsComponent implements OnInit {
   // Data
   trades: Trade[] = [];
   triggers: Trigger[] = [];
-  // latestTriggers: Trigger[] = [];
+  stocks$!: Observable<Stock[]>;
   latestTriggers$ = this.triggerService.latestTriggers$;
   latestTriggerTotal$ = this.triggerService.latestTriggerTotal$;
 
@@ -45,6 +48,8 @@ export class AllActionsComponent implements OnInit {
   sensexColumns: TableColumn<Sensex>[] = [];
   tradeColumns: TableColumn<Trade>[] = [];
   triggerColumns: TableColumn<Trigger>[] = [];
+  stockColumns: TableColumn<Stock>[] = [];
+
   pageIndex: number = 0;
   pageSize: number = 10;
 
@@ -57,19 +62,32 @@ export class AllActionsComponent implements OnInit {
     private tradeService: TradeService,
     private triggerService: TriggerService,
     private sensexService: SensexService,
-    private destroyRef: DestroyRef
+    private destroyRef: DestroyRef,
+    private dialog: MatDialog
   ) {
+
+    this.stocks$ = this.stockService.stocks$.pipe(
+      map(stocksDictionary => Object.values(stocksDictionary))
+    );
 
     this.sensexData$ = this.sensexService.sensex$.pipe(
       map(sensex => [sensex])
     );
 
-    this.sensexColumns = [
-      { key: 'name', label: 'Index', cell: () => 'SENSEX', width: '100px' },
-      { key: 'currPrice', label: 'Price', cell: (s) => s.currPrice.toFixed(2), width: '100px' },
+    this.stockColumns = [
+      { key: 'name', label: 'Index', cell: (s) => `${s.symbol} (${(((s.currPrice - s.basePrice) / s.basePrice) * 100).toFixed(2)}%)`, width: '100px' },
+      { key: 'currPrice', label: 'Price', cell: (s) => `${s.currPrice.toFixed(2)}`, width: '100px' },
       { key: 'basePrice', label: 'Base Price', cell: (s) => s.basePrice.toFixed(2), width: '100px' },
       { key: 'lastDirection', label: 'Direction', width: '100px' },
-      { key: 'timestamp', label: 'Last Updated', cell: (s) => s.lastTriggerTime ? new Date(s.lastTriggerTime).toLocaleTimeString() : '-', width: '120px' }
+      { key: 'timestamp', label: 'Last Updated', cell: (s) => s.lastTriggerTime ? new Date(s.lastTriggerTime).toLocaleString() : '-', width: '120px' }
+    ];
+
+    this.sensexColumns = [
+      { key: 'name', label: 'Index', cell: (s) => `SENSEX (${(((s.currPrice - s.basePrice) / s.basePrice) * 100).toFixed(2)}%)`, width: '100px' },
+      { key: 'currPrice', label: 'Price', cell: (s) => `${s.currPrice.toFixed(2)}`, width: '100px' },
+      { key: 'basePrice', label: 'Base Price', cell: (s) => s.basePrice.toFixed(2), width: '100px' },
+      { key: 'lastDirection', label: 'Direction', width: '100px' },
+      { key: 'timestamp', label: 'Last Updated', cell: (s) => s.lastTriggerTime ? new Date(s.lastTriggerTime).toLocaleString() : '-', width: '120px' }
     ];
 
     this.tradeColumns = [
@@ -83,11 +101,11 @@ export class AllActionsComponent implements OnInit {
 
     this.triggerColumns = [
       { key: 'symbol', label: 'Symbol', width: '80px' },
+      { key: 'action', label: 'Action', width: '80px' },
       { key: 'stockPrice', label: 'Stock Price', cell: t => t.stockPrice.toFixed(2), width: '80px' },
       { key: 'lastStockPrice', label: 'Base Stock Price', cell: t => t.lastStockPrice.toFixed(2), width: '90px' },
       { key: 'stockDirection', label: 'Stock Direction', cell: t => t.stockDirection, width: '80px' },
       { key: 'sensexDirection', label: 'Sensex Direction', cell: t => t.sensexDirection, width: '80px' },
-      { key: 'action', label: 'Action', width: '80px' },
       { key: 'timestamp', label: 'Time', cell: t => t.timestamp ? new Date(t.timestamp).toLocaleString() : "-", width: '140px' }
     ];
   }
@@ -96,8 +114,6 @@ export class AllActionsComponent implements OnInit {
     this.loadTrades(0, 10);
     this.loadTriggers(0, 10);
     this.loadLatestTriggers(0, 10);
-
-    // this.triggerService.getLatestTriggers(0, 10, []).subscribe();
 
     this.triggerService.realTimeTrigger$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -183,7 +199,14 @@ export class AllActionsComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // Row Styles
+  openSensexHistory() {
+    this.dialog.open(SensexHistoryComponent, {
+      width: '800px',
+      maxHeight: '90vh',
+      disableClose: false
+    });
+  }
+
   rowClass(row: any) {
     if (row.action === 'BUY') return 'row-buy';
     if (row.action === 'SELL') return 'row-sell';
