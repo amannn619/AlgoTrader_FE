@@ -30,34 +30,6 @@
 </div>
 
 <mat-tab-group class="stock-tabs">
-  <mat-tab label="Trades">
-    <div class="filter-bar">
-      <mat-form-field appearance="outline" class="action-filter">
-        <mat-label>Action</mat-label>
-        <mat-select
-          multiple
-          [(value)]="selectedTradeActions"
-          (selectionChange)="onActionChange('trade')"
-        >
-          <mat-option value="BUY">Buy</mat-option>
-          <mat-option value="SELL">Sell</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="table-container">
-      <app-smart-table
-        [columns]="tradeColumns"
-        [data]="trades"
-        [enablePagination]="true"
-        [totalCount]="totalTrades"
-        [rowClassFn]="rowClass"
-        (pageChange)="onTradePageChange($event)"
-      >
-      </app-smart-table>
-    </div>
-  </mat-tab>
-
   <mat-tab label="Triggers">
     <div class="filter-bar">
       <mat-form-field appearance="outline" class="action-filter">
@@ -82,6 +54,34 @@
         [totalCount]="totalTriggers"
         [rowClassFn]="rowClass"
         (pageChange)="onTriggerPageChange($event)"
+      >
+      </app-smart-table>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Trades">
+    <div class="filter-bar">
+      <mat-form-field appearance="outline" class="action-filter">
+        <mat-label>Action</mat-label>
+        <mat-select
+          multiple
+          [(value)]="selectedTradeActions"
+          (selectionChange)="onActionChange('trade')"
+        >
+          <mat-option value="BUY">Buy</mat-option>
+          <mat-option value="SELL">Sell</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="table-container">
+      <app-smart-table
+        [columns]="tradeColumns"
+        [data]="trades"
+        [enablePagination]="true"
+        [totalCount]="totalTrades"
+        [rowClassFn]="rowClass"
+        (pageChange)="onTradePageChange($event)"
       >
       </app-smart-table>
     </div>

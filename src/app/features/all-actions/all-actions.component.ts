@@ -5,7 +5,7 @@ import { Observable, Subscription, map } from 'rxjs';
 import { MASTER_STOCKS, StockConfig } from 'src/app/core/config/master-stocks';
 import { Sensex } from 'src/app/core/models/sensex.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TableColumn } from 'src/app/core/models/table-column';
+import { TableAction, TableColumn } from 'src/app/core/models/table-column';
 import { Trade } from 'src/app/core/models/trade.model';
 import { Trigger } from 'src/app/core/models/trigger.model';
 import { SensexService } from 'src/app/core/services/sensex.service';
@@ -49,12 +49,9 @@ export class AllActionsComponent implements OnInit {
   tradeColumns: TableColumn<Trade>[] = [];
   triggerColumns: TableColumn<Trigger>[] = [];
   stockColumns: TableColumn<Stock>[] = [];
-
+  stockActions: TableAction<Stock>[] = [];
   pageIndex: number = 0;
   pageSize: number = 10;
-
-
-  private wsSub!: Subscription;
 
   constructor(
     private router: Router,
@@ -81,6 +78,14 @@ export class AllActionsComponent implements OnInit {
       { key: 'lastDirection', label: 'Direction', width: '100px' },
       { key: 'timestamp', label: 'Last Updated', cell: (s) => s.lastTriggerTime ? new Date(s.lastTriggerTime).toLocaleString() : '-', width: '120px' }
     ];
+    this.stockActions = [
+      {
+        icon: "visibility",
+        tooltip: "View All Actions",
+        color: "primary",
+        onClick: (s) => this.redirectToStockDetail(s)
+      }
+    ]
 
     this.sensexColumns = [
       { key: 'name', label: 'Index', cell: (s) => `SENSEX (${(((s.currPrice - s.basePrice) / s.basePrice) * 100).toFixed(2)}%)`, width: '100px' },
@@ -120,6 +125,10 @@ export class AllActionsComponent implements OnInit {
       .subscribe(newTrigger => {
         this.handleNewLog(newTrigger);
       });
+  }
+
+  redirectToStockDetail(stock: Stock) {
+    this.router.navigate([`stock/${stock.symbol}`])
   }
 
   handleNewLog(trigger: Trigger) {
